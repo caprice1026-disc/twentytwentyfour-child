@@ -35,8 +35,8 @@ function custom_category_cloud_by_slugs($atts) {
     $output = '<div class="category-cloud">';
 
     foreach ($categories as $category) {
-        $font_size = 8 + ($category->count * 2);
-        if ($font_size > 22) $font_size = 18;
+        $font_size = 8 + ($category->count / 2);
+        if ($font_size > 18) $font_size = 18;
 
         // カテゴリーリンクにマージンを追加
         $output .= sprintf(
@@ -108,7 +108,7 @@ function custom_avatar_by_persona($avatar, $id_or_email, $size, $default, $alt) 
 add_filter('get_avatar', 'custom_avatar_by_persona', 10, 5);
 
 function auto_approve_specific_ipv6_comment( $approved, $commentdata ) {
-    $trusted_ipv6_prefix = ''; // 信頼できるIPv6アドレスの最初の12桁。書き加えること。
+    $trusted_ipv6_prefix = '2600:1900:2000'; // 信頼できるIPv6アドレスの最初の12桁
     $user_ip = $commentdata['comment_author_IP'];
 
     if ( strpos( $user_ip, $trusted_ipv6_prefix ) === 0 ) {
@@ -244,5 +244,3 @@ function add_explanation_link($content) {
     return $content;
 }
 add_filter('the_content', 'add_explanation_link');
-
-
