@@ -245,6 +245,8 @@ function add_explanation_link($content) {
 }
 add_filter('the_content', 'add_explanation_link');
 
+// functions.php またはカスタムプラグイン内
+
 function my_post_published_action( $new_status, $old_status, $post ) {
     if ( 'pending' === $old_status && 'publish' === $new_status ) {
         // 定義されたエンドポイントURLを使用
@@ -263,20 +265,22 @@ function my_post_published_action( $new_status, $old_status, $post ) {
         // 記事のコンテンツを取得
         $post_content = $post->post_content;
 
-        // HTTPリクエストのボディを構築
-        $body = array(
+        // HTTPリクエストのボディを構築（JSON形式）
+        $body = json_encode(array(
             'url' => $post_url,
             'categories' => $category_names,
             'content' => $post_content
-        );
+        ));
 
         // HTTPリクエストの送信
         wp_remote_post($endpoint_url, array(
-            'method'      => 'POST',
-            'body'        => $body
+            'method' => 'POST',
+            'headers' => array('Content-Type' => 'application/json'),
+            'body' => $body
         ));
     }
 }
 
 add_action( 'transition_post_status', 'my_post_published_action', 10, 3 );
+
 
