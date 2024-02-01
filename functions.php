@@ -262,8 +262,8 @@ function my_post_published_action( $new_status, $old_status, $post ) {
             array_push($category_names, $category->name);
         }
 
-        // 記事のコンテンツを取得
-        $post_content = $post->post_content;
+        // 記事のコンテンツを取得し、wp_kses_postを使用してサニタイズ
+        $post_content = wp_kses_post($post->post_content);
 
         // HTTPリクエストのボディを構築（JSON形式）
         $body = json_encode(array(
@@ -282,5 +282,6 @@ function my_post_published_action( $new_status, $old_status, $post ) {
 }
 
 add_action( 'transition_post_status', 'my_post_published_action', 10, 3 );
+
 
 
