@@ -244,3 +244,39 @@ function add_explanation_link($content) {
     return $content;
 }
 add_filter('the_content', 'add_explanation_link');
+
+function my_post_published_action( $new_status, $old_status, $post ) {
+    if ( 'pending' === $old_status && 'publish' === $new_status ) {
+        // 定義されたエンドポイントURLを使用
+        $endpoint_url = MY_ENDPOINT_URL;
+
+        // 記事のURLを取得
+        $post_url = get_permalink($post->ID);
+
+        // 記事のカテゴリー名を取得
+        $categories = get_the_category($post->ID);
+        $category_names = array();
+        foreach ($categories as $category) {
+            array_push($category_names, $category->name);
+        }
+
+        // 記事のコンテンツを取得
+        $post_content = $post->post_content;
+
+        // HTTPリクエストのボディを構築
+        $body = array(
+            'url' => $post_url,
+            'categories' => $category_names,
+            'content' => $post_content
+        );
+
+        // HTTPリクエストの送信
+        wp_remote_post($endpoint_url, array(
+            'method'      => 'POST',
+            'body'        => $body
+        ));
+    }
+}
+
+add_action( 'transition_post_status', 'my_post_published_action', 10, 3 );
+
